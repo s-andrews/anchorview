@@ -1,0 +1,147 @@
+---
+title: "Visualisting Data Integration with Anchorview"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc-depth: 4
+vignette: >
+  %\VignetteIndexEntry{anchorview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(anchorview)
+library(Seurat)
+library(tidyverse)
+```
+
+# Introduction
+The technical nature of 10X library production is that different runs of the chromium system will generate data containing differences which are technical in nature and don't derive from biological differences between samples.
+
+When analysing data deriving from multiple libraries it is common to see that the different libraries separate in dimensionality reduction plots (PCA/tSNE/UMAP) such that cells from the same type do not cluster together, impeding the analysis of biological change in the samples.
+
+In these circumstances it is usual to perform a data integration step to align the cells in different samples.  This integration is driven by the identification of so-called "integration anchors" - pairs of cells from different datasets which are considered to be equivalent, and which would ideally sit on top of each other in a correctly integrated version of the data.
+
+The integration of data within the Sueurat framework is often performed blindly, with the selection of anchors happening behind the scenes, and no review of the anchor points being performed before the data is transformed.  Whilst this works well in many cases it can be beneficial to find a way to visualise the anchors in the data before actually running the transformation to see how numerous and consistent the identified anchors are.  This is the purpose of the anchorview package.
+
+Here we will step through an example data integration and show how the anchors can be visualised before the integration is performed.
+
+
+# Loading data
+The starting point for the analysis is a Seurat data object in which multiple samples have been loaded.
+
+The example data we're using is part of the `SeuratData` package.  The full process of installing this 
+
+```{r}
+SeuratData::InstallData("ifnb")
+SeuratData::LoadData("ifnb") -> original_data
+original_data
+```
+
+This is a dataset with two experiments in it, stimulated and unstimulated.
+
+```{r}
+original_data[[]] %>%
+  group_by(stim) %>%
+  count(name="Number_of_Cells")
+```
+
+## Viewing unintegrated UMAP
+
+Let's do a simple processing of the data without integration to illustrate the problem we need to solve.  We're not optimising any of this but are just taking the common defaults.
+
+```{r}
+original_data %>%
+  NormalizeData() %>% 
+  FindVariableFeatures() %>%
+  ScaleData() %>%
+  RunPCA() %>%
+  RunUMAP(dims = 1:30, reduction = "pca", reduction.name = "umap.unintegrated") -> original_data
+```
+
+Let's look at the UMAP which resulted from this.
+
+```{r fig.width=8, fig.height=7}
+DimPlot(original_data, group.by = "stim")
+```
+
+We can clearly see the problem which is that the two samples do not generall align with each other, so although we can visually identify similar structures within the two datasets, if we try to generate cell clusters from this data we will get clusters which derive largely from only one of the two samples.
+
+```{r}
+original_data %>%
+  FindNeighbors() %>%
+  FindClusters(resolution = 0.5) -> original_data
+```
+
+```{r fig.width=8, fig.height=7}
+DimPlot(original_data, group.by = "seurat_clusters")
+```
+
+```{r fig.width=9, fig.height=3}
+original_data[[]] %>%
+  group_by(seurat_clusters,stim) %>%
+  count() %>%
+  pivot_wider(
+    names_from=stim,
+    values_from=n,
+    values_fill = 0
+  ) %>%
+  mutate(
+    percent_stim=100*STIM/(STIM+CTRL),
+    percent_ctrl=100*CTRL/(STIM+CTRL),
+  ) %>%
+  select(seurat_clusters,starts_with("percent")) %>%
+  pivot_longer(
+    cols=-seurat_clusters,
+    names_to="sample",
+    values_to="percentage"
+  ) %>%
+  ggplot(aes(x=seurat_clusters, y=percentage, fill=sample)) +
+  geom_col()
+
+```
+
+The majority of the clusters are heavily biased towards one sample or the other, which is not what we'd want for an integrated analysis.
+
+
+# Detection of integration anchors
+
+To find integration anchors we need to split the full Seurat object into the original samples, we can then use the `FindIntegrationAnchors` function to identify the points of commonality between the samples.
+
+```{r}
+original_data %>%
+  SplitObject(split.by = "stim") -> split_objects
+
+split_objects
+```
+
+
+```{r}
+FindIntegrationAnchors(split_objects, ) -> default_anchors
+```
+
+```{r}
+default_anchors@anchors %>%
+  ggplot(aes(x=score)) +
+  geom_density()
+
+```
+
+Now we can convert the anchors into x,y coordinates within our UMAP reduction
+
+```{r}
+get_positions_for_anchors(default_anchors, reduction = "umap.unintegrated") -> default_anchor_positions
+
+head(default_anchor_positions)
+```
+
+We can now plot these out on the combined UMAP
+
