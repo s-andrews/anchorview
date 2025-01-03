@@ -1,0 +1,13 @@
+Package: anchorview
+Title: Visualisation of Seurat integration anchors
+Version: 0.0.1
+Authors@R: 
+    person("Simon", "Andrews", , "simon.andrews@babraham.ac.uk", role = c("aut", "cre"))
+Description: This package provides a graphical visualisation of the integration anchors which would be used to integrate multiple datasets in a single cell RNA-Seq experiment.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: 
+    ggplot2,
+    Seurat
