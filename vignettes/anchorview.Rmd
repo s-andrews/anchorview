@@ -143,5 +143,44 @@ get_positions_for_anchors(default_anchors, reduction = "umap.unintegrated") -> d
 head(default_anchor_positions)
 ```
 
+You can see that we have both the CellIDs for the two datasets and the x,y positions in the chosen reduction.
+
 We can now plot these out on the combined UMAP
+
+
+```{r fig.height=7, fig.width=8}
+plot_integration_anchors(
+  split_objects,
+  default_anchor_positions,
+  reduction="umap.unintegrated"
+) + theme_bw()
+```
+
+This is good but is overcrowded.  We can improve it by increasing the minimum score for the anchors to show
+
+```{r fig.height=7, fig.width=8}
+plot_integration_anchors(
+  split_objects,
+  default_anchor_positions,
+  reduction="umap.unintegrated",
+  min_score = 0.95
+) + theme_bw()
+```
+
+That's a lot clearer and is one solution to the problem.  Because we have a lot of anchors running in the same direction though we can group them together to simplify the plot.
+
+
+```{r}
+cluster_anchor_positions(default_anchor_positions, min_score = 0, cluster_threshold = 7) -> clustered_default_anchor_positions
+```
+
+```{r fig.height=7, fig.width=8}
+plot_integration_anchors(
+  split_objects,
+  clustered_default_anchor_positions,
+  reduction="umap.unintegrated",
+) + theme_bw() 
+```
+
+We can see that with these settings it's actually not doing a great job of matching up the correct cells.
 
