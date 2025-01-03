@@ -9,10 +9,10 @@
 #' @export
 #'
 #' @examples
-plot_integration_anchors <- function(split_objects, anchor_positions, reduction="umap", min_score=0) {
+plot_integration_anchors <- function(split_objects, anchor_positions, reduction="umap", min_score=0, max_score=1) {
 
   anchor_positions |>
-    dplyr::filter(score >= min_score) -> anchor_positions
+    dplyr::filter(score >= min_score & score <= max_score) -> anchor_positions
 
   names(split_objects) -> conditions
 

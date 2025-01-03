@@ -8,10 +8,10 @@
 #' @export
 #'
 #' @examples
-cluster_anchor_positions <- function(anchor_positions, min_score=0, cluster_threshold=5) {
+cluster_anchor_positions <- function(anchor_positions, min_score=0, max_score=1, cluster_threshold=5) {
 
   anchor_positions |>
-    dplyr::filter(score>=min_score) -> anchor_positions
+    dplyr::filter(score>=min_score & score <= max_score) -> anchor_positions
 
 
   hclust(dist(anchor_positions %>% select(cellid1_x,cellid1_y, cellid2_x, cellid2_y), method = "euclidean")) -> clustered_anchors

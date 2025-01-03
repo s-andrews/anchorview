@@ -156,14 +156,13 @@ plot_integration_anchors(
 ) + theme_bw()
 ```
 
-This is good but is overcrowded.  We can improve it by increasing the minimum score for the anchors to show
+This is good but is overcrowded.  We can subsample to show fewer anchors
 
 ```{r fig.height=7, fig.width=8}
 plot_integration_anchors(
   split_objects,
-  default_anchor_positions,
-  reduction="umap.unintegrated",
-  min_score = 0.95
+  default_anchor_positions %>% sample_n(500),
+  reduction="umap.unintegrated"
 ) + theme_bw()
 ```
 
@@ -171,7 +170,7 @@ That's a lot clearer and is one solution to the problem.  Because we have a lot 
 
 
 ```{r}
-cluster_anchor_positions(default_anchor_positions, min_score = 0, cluster_threshold = 7) -> clustered_default_anchor_positions
+cluster_anchor_positions(default_anchor_positions, cluster_threshold = 7) -> clustered_default_anchor_positions
 ```
 
 ```{r fig.height=7, fig.width=8}
@@ -182,5 +181,14 @@ plot_integration_anchors(
 ) + theme_bw() 
 ```
 
-We can see that with these settings it's actually not doing a great job of matching up the correct cells.
+We can evem remove some of the poorly clustered groups to reduce the noise further.
 
+```{r fig.height=7, fig.width=8}
+plot_integration_anchors(
+  split_objects,
+  clustered_default_anchor_positions %>% filter(anchor_weight>400),
+  reduction="umap.unintegrated",
+) + theme_bw() 
+```
+
+This shows a much clearer view of where the most frequent anchors are constructed and where the data is likely to skew when integration is finally performed.
