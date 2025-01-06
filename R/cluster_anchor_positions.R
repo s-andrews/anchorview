@@ -14,7 +14,7 @@ cluster_anchor_positions <- function(anchor_positions, min_score=0, max_score=1,
     dplyr::filter(score>=min_score & score <= max_score) -> anchor_positions
 
 
-  hclust(dist(anchor_positions %>% select(cellid1_x,cellid1_y, cellid2_x, cellid2_y), method = "euclidean")) -> clustered_anchors
+  hclust(dist(anchor_positions |> dplyr::select(cellid1_x,cellid1_y, cellid2_x, cellid2_y), method = "euclidean")) -> clustered_anchors
 
   cutree(clustered_anchors,h = cluster_threshold) -> groups
 
