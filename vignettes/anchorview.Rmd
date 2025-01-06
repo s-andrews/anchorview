@@ -143,6 +143,7 @@ get_positions_for_anchors(default_anchors, reduction = "umap") -> default_anchor
 head(default_anchor_positions)
 ```
 
+
 You can see that we have both the CellIDs for the two datasets and the x,y positions in the chosen reduction.
 
 We can now plot these out on the combined UMAP
@@ -161,7 +162,7 @@ This is good but is overcrowded.  We can randomly subsample to show fewer anchor
 ```{r fig.height=7, fig.width=8}
 plot_integration_anchors(
   split_objects,
-  default_anchor_positions %>% sample_n(500),
+  default_anchor_positions %>% sample_n(1000),
   reduction="umap"
 ) + theme_bw()
 ```
@@ -170,7 +171,7 @@ That's a lot clearer and is one solution to the problem.  Because we have a lot 
 
 
 ```{r}
-cluster_anchor_positions(default_anchor_positions, cluster_threshold = 7) -> clustered_default_anchor_positions
+cluster_anchor_positions(default_anchor_positions, cluster_threshold = 3) -> clustered_default_anchor_positions
 ```
 
 
@@ -191,10 +192,12 @@ We can even remove some of the poorly clustered groups to reduce the noise furth
 ```{r fig.height=7, fig.width=8}
 plot_integration_anchors(
   split_objects,
-  clustered_default_anchor_positions %>% filter(anchor_weight>400),
+  clustered_default_anchor_positions %>% filter(anchor_weight>50),
   reduction="umap",
 ) + theme_bw() 
 ```
 
 This shows a much clearer view of where the most frequent anchors are constructed and where the data is likely to skew when integration is finally performed.
+
+You can play around with the degree of clustering and filtering to get the view you prefer.
 
