@@ -16,13 +16,13 @@ plot_integration_anchors <- function(split_objects, anchor_positions, reduction=
 
   names(split_objects) -> conditions
 
-  Seurat::Embeddings(split_objects[[1]], reduction="umap.unintegrated") |>
+  Seurat::Embeddings(split_objects[[1]], reduction=reduction) |>
     tibble::as_tibble() |>
     tibble::add_column(
       sample=conditions[1]
     ) -> dimension_reduction1
 
-  Seurat::Embeddings(split_objects[[2]], reduction="umap.unintegrated") |>
+  Seurat::Embeddings(split_objects[[2]], reduction=reduction) |>
     tibble::as_tibble() |>
     tibble::add_column(
       sample=conditions[2]

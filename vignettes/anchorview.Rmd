@@ -64,7 +64,7 @@ original_data %>%
   FindVariableFeatures() %>%
   ScaleData() %>%
   RunPCA() %>%
-  RunUMAP(dims = 1:30, reduction = "pca", reduction.name = "umap.unintegrated") -> original_data
+  RunUMAP(dims = 1:30, reduction = "pca", reduction.name = "umap") -> original_data
 ```
 
 Let's look at the UMAP which resulted from this.
@@ -125,7 +125,7 @@ split_objects
 
 
 ```{r}
-FindIntegrationAnchors(split_objects, ) -> default_anchors
+FindIntegrationAnchors(split_objects) -> default_anchors
 ```
 
 ```{r}
@@ -138,7 +138,7 @@ default_anchors@anchors %>%
 Now we can convert the anchors into x,y coordinates within our UMAP reduction
 
 ```{r}
-get_positions_for_anchors(default_anchors, reduction = "umap.unintegrated") -> default_anchor_positions
+get_positions_for_anchors(default_anchors, reduction = "umap") -> default_anchor_positions
 
 head(default_anchor_positions)
 ```
@@ -152,17 +152,17 @@ We can now plot these out on the combined UMAP
 plot_integration_anchors(
   split_objects,
   default_anchor_positions,
-  reduction="umap.unintegrated"
+  reduction="umap"
 ) + theme_bw()
 ```
 
-This is good but is overcrowded.  We can subsample to show fewer anchors
+This is good but is overcrowded.  We can randomly subsample to show fewer anchors
 
 ```{r fig.height=7, fig.width=8}
 plot_integration_anchors(
   split_objects,
   default_anchor_positions %>% sample_n(500),
-  reduction="umap.unintegrated"
+  reduction="umap"
 ) + theme_bw()
 ```
 
@@ -173,22 +173,28 @@ That's a lot clearer and is one solution to the problem.  Because we have a lot 
 cluster_anchor_positions(default_anchor_positions, cluster_threshold = 7) -> clustered_default_anchor_positions
 ```
 
+
+Now we can plot the clustered anchors.  Their weight represents the number of individual anchors which were combined so we can filter on this to clean up the plot from sets with low weights.
+
 ```{r fig.height=7, fig.width=8}
 plot_integration_anchors(
   split_objects,
   clustered_default_anchor_positions,
-  reduction="umap.unintegrated",
+  reduction="umap",
 ) + theme_bw() 
 ```
 
-We can evem remove some of the poorly clustered groups to reduce the noise further.
+This is pretty nice but we an see some spurious links from clusters with large cell numbers and poor linkage to other secondary regions.
+
+We can even remove some of the poorly clustered groups to reduce the noise further.
 
 ```{r fig.height=7, fig.width=8}
 plot_integration_anchors(
   split_objects,
   clustered_default_anchor_positions %>% filter(anchor_weight>400),
-  reduction="umap.unintegrated",
+  reduction="umap",
 ) + theme_bw() 
 ```
 
 This shows a much clearer view of where the most frequent anchors are constructed and where the data is likely to skew when integration is finally performed.
+
