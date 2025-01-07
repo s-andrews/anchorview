@@ -226,18 +226,10 @@ Now we can find integration anchors again
 FindIntegrationAnchors(split_objects) -> clustered_anchors
 ```
 
-Now we need to associate anchors with clusters in the two datasets.
+Now we can plot the anchors from this in a couple of ways.
 
 ```{r}
-extract_cluster_anchors(clustered_anchors, clusters1="seurat_clusters", clusters2="seurat_clusters") -> extracted_cluster_anchors
-
-head(extracted_cluster_anchors)
-```
-
-Now we can plot this in a couple of ways.
-
-```{r}
-plot_cluster_interaction_matrix(extracted_cluster_anchors)
+plot_cluster_interaction_matrix(clustered_anchors,clusters1 = "seurat_clusters", clusters2 = "seurat_clusters")
 ```
 
 We can also plot this on a dimension reduction plot.

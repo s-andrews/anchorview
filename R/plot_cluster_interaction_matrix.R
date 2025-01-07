@@ -6,9 +6,11 @@
 #' @export
 #'
 #' @examples
-plot_cluster_interaction_matrix <- function(cluster_anchors) {
+plot_cluster_interaction_matrix <- function(cluster_anchors, min_score=0, clusters1="seurat_clusters", clusters2="seurat_clusters") {
 
-  cluster_anchors |>
+  extract_cluster_anchors(cluster_anchors, min_score=min_score, clusters1 = clusters1, clusters2=clusters2) -> extracted_clusters
+
+  extracted_clusters |>
     dplyr::group_by(cluster1,cluster2) |>
     dplyr::count() |>
     dplyr::ungroup() |>
