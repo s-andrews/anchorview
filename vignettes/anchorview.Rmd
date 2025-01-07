@@ -201,3 +201,46 @@ This shows a much clearer view of where the most frequent anchors are constructe
 
 You can play around with the degree of clustering and filtering to get the view you prefer.
 
+# Matching Clusters
+
+Another potentially useful approach is to take clusters defined in each of the individual datasets and then use the integration anchors to match up the links between clusters.  This can be useful when transferring cell types for example.
+
+## Find clusters in individual datasets
+
+```{r fig.width=6, fig.height=5}
+split_objects[[1]] %>%
+  FindNeighbors() %>%
+  FindClusters(resolution = 0.5) -> split_objects[[1]]
+
+split_objects[[2]] %>%
+  FindNeighbors() %>%
+  FindClusters(resolution = 0.5) -> split_objects[[2]]
+
+DimPlot(split_objects[[1]], reduction="umap", group.by = "seurat_clusters") + ggtitle(split_objects[[1]][[]]$stim[[1]])
+DimPlot(split_objects[[2]], reduction="umap", group.by = "seurat_clusters") + ggtitle(split_objects[[2]][[]]$stim[[1]])
+```
+
+Now we can find integration anchors again
+
+```{r}
+FindIntegrationAnchors(split_objects) -> clustered_anchors
+```
+
+Now we need to associate anchors with clusters in the two datasets.
+
+```{r}
+extract_cluster_anchors(clustered_anchors, clusters1="seurat_clusters", clusters2="seurat_clusters") -> extracted_cluster_anchors
+
+head(extracted_cluster_anchors)
+```
+
+Now we can plot this in a couple of ways.
+
+```{r}
+plot_cluster_interaction_matrix(extracted_cluster_anchors)
+```
+
+We can also plot this on a dimension reduction plot.
+
+
+
