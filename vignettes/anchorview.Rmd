@@ -210,11 +210,11 @@ Another potentially useful approach is to take clusters defined in each of the i
 ```{r fig.width=6, fig.height=5}
 split_objects[[1]] %>%
   FindNeighbors() %>%
-  FindClusters(resolution = 0.5) -> split_objects[[1]]
+  FindClusters(resolution = 0.2) -> split_objects[[1]]
 
 split_objects[[2]] %>%
   FindNeighbors() %>%
-  FindClusters(resolution = 0.5) -> split_objects[[2]]
+  FindClusters(resolution = 0.2) -> split_objects[[2]]
 
 DimPlot(split_objects[[1]], reduction="umap", group.by = "seurat_clusters") + ggtitle(split_objects[[1]][[]]$stim[[1]])
 DimPlot(split_objects[[2]], reduction="umap", group.by = "seurat_clusters") + ggtitle(split_objects[[2]][[]]$stim[[1]])
@@ -228,11 +228,14 @@ FindIntegrationAnchors(split_objects) -> clustered_anchors
 
 Now we can plot the anchors from this in a couple of ways.
 
-```{r}
+```{r fig.width=6, fig.height=5}
 plot_cluster_interaction_matrix(clustered_anchors,clusters1 = "seurat_clusters", clusters2 = "seurat_clusters")
 ```
 
 We can also plot this on a dimension reduction plot.
 
+```{r fig.width=10, fig.height=9}
+dimplot_cluster_interactions(clustered_anchors,clusters1 = "seurat_clusters", clusters2 = "seurat_clusters", reduction="umap") +theme_bw()
+```
 
 
