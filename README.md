@@ -6,6 +6,11 @@ This package provides tools to construct a visualisation which is useful when pe
 
 ![Anchorview Summary](https://raw.githubusercontent.com/s-andrews/anchorview/refs/heads/main/images/anchorview.png)
 
+As well as looking at anchors from individual cells you can also summarise linkages around clusters defined in your two datasets.
+
+![Anchorview Summary](https://raw.githubusercontent.com/s-andrews/anchorview/refs/heads/main/images/anchorview2.png)
+
+
 
 ## Installation
 
