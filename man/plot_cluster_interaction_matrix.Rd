@@ -4,10 +4,15 @@
 \alias{plot_cluster_interaction_matrix}
 \title{Plot a cluster level interaction matrix for anchors}
 \usage{
-plot_cluster_interaction_matrix(cluster_anchors)
+plot_cluster_interaction_matrix(
+  cluster_anchors,
+  min_score = 0,
+  clusters1 = "seurat_clusters",
+  clusters2 = "seurat_clusters"
+)
 }
 \arguments{
-\item{cluster_anchors}{}
+\item{cluster_anchors}{Output of FindIntegrationAnchors}
 }
 \value{
 heatmap of cluster percentage interaction
