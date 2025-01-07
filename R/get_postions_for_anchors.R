@@ -1,5 +1,3 @@
-
-
 #' Convert a list of integration anchors into pairwise positions in a dimensional reduction
 #'
 #' @param anchors An output from FindIntegrationAnchors
