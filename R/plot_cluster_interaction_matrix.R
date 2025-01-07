@@ -1,6 +1,6 @@
 #' Plot a cluster level interaction matrix for anchors
 #'
-#' @param cluster_anchors
+#' @param cluster_anchors Output of FindIntegrationAnchors
 #'
 #' @return heatmap of cluster percentage interaction
 #' @export
