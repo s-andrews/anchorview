@@ -13,8 +13,6 @@
 #' @examples
 dimplot_cluster_interactions <- function(cluster_anchors, min_score=0, clusters1="seurat_clusters", clusters2="seurat_clusters", reduction="umap", min_percent=10) {
 
-  clustered_anchors -> cluster_anchors
-
   # We need to get the values for the percentage overlaps
 
   extract_cluster_anchors(cluster_anchors, min_score=min_score, clusters1 = clusters1, clusters2=clusters2) -> extracted_clusters
