@@ -12,7 +12,8 @@ Imports:
     dplyr,
     ggplot2,
     Seurat,
-    tibble
+    tibble,
+    tidyheatmaps
 Suggests: 
     knitr,
     rmarkdown
