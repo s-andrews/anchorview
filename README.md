@@ -10,6 +10,10 @@ As well as looking at anchors from individual cells you can also summarise linka
 
 ![Anchorview Summary](https://raw.githubusercontent.com/s-andrews/anchorview/refs/heads/main/images/anchorview2.png)
 
+## Video Demonstration
+
+[![Anchorview video](../main/images/anchorview_title_slide.png?raw=true)](https://youtu.be/cqpuJ8lFOjk?si=9py9V1NQ_mdKEk-h)
+
 
 
 ## Installation
